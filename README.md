@@ -1,4 +1,4 @@
-# Octopus Deploy plugin
+# [Samson](https://github.com/zendesk/samson) plugin
 
 
 [![Build Status][xlr-samson-plugin-travis-image]][xlr-samson-plugin-travis-url]
@@ -19,7 +19,7 @@
 
 ## Preface
 
-This document describes the functionality provided by the XL Release Samson plugin.
+This document describes the functionality provided by the XL Release [Samson](https://github.com/zendesk/samson) plugin.
 
 See the [XL Release reference manual](https://docs.xebialabs.com/xl-release) for background information on XL Release and release orchestration concepts.  
 
