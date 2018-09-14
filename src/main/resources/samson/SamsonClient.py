@@ -15,26 +15,30 @@ from xlrelease.HttpRequest import HttpRequest
 
 HTTP_SUCCESS = sets.Set([200, 201])
 
+
 class SamsonClient(object):
-    
-    def __init__(self, httpConnection, webhookToken):
+
+    def __init__(self, httpConnection, webhookToken, projectName):
         self.httpConnection = httpConnection
         self.httpRequest = HttpRequest(httpConnection)
         self.webhookToken = webhookToken
         self.headers = self._get_headers()
-        
+        self.projectName = projectName
+        self.maxChecksPerDeploymentId = 30
+
     @staticmethod
     def create_client(httpConnection, webhookToken):
         return SamsonClient(httpConnection, webhookToken)
 
     def _get_headers(self):
-        return {"Accept": "application/json", "Content-Type": "application/json", "Authorization": "Bearer %s" % self.webhookToken}
+        return {"Accept": "application/json", "Content-Type": "application/json",
+                "Authorization": "Bearer %s" % self.webhookToken}
 
     def ping(self):
         # random valid endpoint that verifies we're logged in / have a valid token
-        url = '/projects'
+        url = '/projects/%s' % self.projectName
         response = self.httpRequest.get(url, headers=self.headers)
-        if response.getStatus() in HTTP_SUCCESS: 
+        if response.getStatus() in HTTP_SUCCESS:
             data = json.loads(response.getResponse())
             print json.dumps(data)
         else:
@@ -43,11 +47,11 @@ class SamsonClient(object):
     def start_deploy(self, webhook_id, commit_sha, message):
         url = "/integrations/generic/%s" % webhook_id
         body = {
-            "deploy": { 
+            "deploy": {
                 "branch": "master",
                 "commit": {
-                    "sha" : commit_sha,
-                    "message" : message
+                    "sha": commit_sha,
+                    "message": message
                 }
             }
         }
@@ -60,12 +64,37 @@ class SamsonClient(object):
 
         if response.getStatus() in HTTP_SUCCESS:
             data = json.loads(response.getResponse())
+            print json.dumps(data["deploy_ids"])
             print json.dumps(data["messages"])
+
+            deploymentStatus = True
+            deployUrlBase = "/projects/%s/deploys"
+            for deploy_id in data["deploy_ids"]:
+                url = deployUrlBase, '/%s.json' % deploy_id
+
+                for check in self.maxChecksPerDeploymentId:
+                    depResponse = self.httpRequest(url, headers=self.headers, body=json.dumps(body))
+
+                    if depResponse.getStatus() in HTTP_SUCCESS:
+                        depData = json.loads(response.getResponse())
+                        depReportUrl = depData["url"]
+                        if depData["status"] == "succeeded":
+                            print "Success: project %s deployment %s succeeded" % self.projectName, deploy_id
+                        else:
+                            if depData["status"] == "failed":
+                                print "Fail: project %s deployment %s failed" % self.projectName, deploy_id
+                                deploymentStatus = False
+                            else:
+                                if check == self.maxChecksPerDeploymentId:
+                                    deploymentStatus = "timed-out"
+
+            data["status"] = deploymentStatus
             return data
 
-        self.throw_error(response)
-       
-    def throw_error(self, response):
-        msg = "Error from server, HTTP Return: %s, content %s\n" % (response.getStatus(),  response.getResponse())
-        print msg
-        sys.exit(msg)
+    self.throw_error(response)
+
+
+def throw_error(self, response):
+    msg = "Error from server, HTTP Return: %s, content %s\n" % (response.getStatus(), response.getResponse())
+    print msg
+    sys.exit(msg)

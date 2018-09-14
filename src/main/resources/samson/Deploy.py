@@ -12,4 +12,4 @@ import sys
 from samson.SamsonClient import SamsonClient
 
 client = SamsonClient(server, server['webhookToken'])
-client.start_deploy(webhook_id, commit_sha, message)
+client.start_deploy(webhook_id, commit_sha, message, project_name)
