@@ -1,2 +1,13 @@
 language: java
 sudo: false
+deploy:
+  provider: releases
+  api_key:
+    secure: rjCfEzydaze+D3VaQi0sMqL4RQWid/q8wCgGu4qa4b/wkhDR8Dm2VVefeb47P6G6Ee2GPMTd0p4OX1UUD6qTVXBF0TNd0W14No7kYGglUajhteWIHERKJ15CDLaKLN38toEvEqPfckIrTbtJA7SWcM859lJlKxwm5FjnaPQWE1atubAhpx/pqnAM6G404QypLtcOYyr2Hs18xHIfXvZZmzar9jh+h1Q4C0kyYO53cE2jRmejoc/PYs0uK+ikcP+cYGL8Dn6QZvUGLfmh2vHMjMAGDiGAIGjlDllSRGWuLeUzEnct3nw97KHYHW4Jh7enYf0K9oJoCXCNCohFGxKrWt122NnPcKzCLA3g7+M3vnl1cOjjcnU3+j5/9l2+KoYKRpH2qOYQSANSiFMAYO3B791gzjSLPOLCilSULa02eWxQGsc8PuiFBBXXuCDYMhpiFJqqBozZnDwbALLl4KLOuk22COJAfbvZtt3A/UKqIuoi0xadjBF6QwchPgdl2Xhe+NdBEA8Ljya4UNJeEyRX/8N3mFJriCY/OeFesn+KPfxhjE2Lkl4cOZYw6njLHLIkACE3IYI6rquF3JmYw1UVtSUy/RkrA8KwASjZnUHrAmAFLxe17eTirfPaHJA365F8VgDvrR5A59mf+OfjoQLKUXAezk/GpnfrxYDFsuMbADc=
+  file_glob: true
+  file: build/libs/*.jar
+  skip_cleanup: true
+  on:
+    all_branches:  true
+    tags:  true
+    repo: xebialabs-community/xlr-samson-plugin
