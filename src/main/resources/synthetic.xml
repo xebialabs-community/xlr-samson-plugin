@@ -17,7 +17,7 @@
     <type type="samson.Server" extends="configuration.HttpConnection">
         <property name="webhookToken" password="true" description="Webhook Token" />
         <property name="username" default="ignored" category="input" hidden="true"/>
-    	<property name="password" password="true" default="ignored" category="input" hidden="true"/>
+        <property name="password" password="true" default="ignored" category="input" hidden="true"/>
     </type>
 
     <type type="samson.Deploy" extends="xlrelease.PythonScript">
@@ -26,7 +26,8 @@
 
         <property name="webhook_id" category="input" label="Webhook ID" description="The webhook id."/>
         <property name="commit_sha" category="input" label="Commit SHA" description="The commit sha we want to deploy."/>
-        <property name="message" category="input" label="Message" description="The message added to the deploy request."/>        
+        <property name="message" category="input" label="Message" description="The message added to the deploy request."/>
+        <property name="project_name" category="input" label="Project Name" description="The project name of the deploy request."/>
 
         <property name="deploymentIdList" label="Deployment ID list" description="The list of IDs of deployments created by this task." category="output" kind="list_of_string" />
     </type>

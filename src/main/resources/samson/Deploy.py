@@ -9,7 +9,13 @@
 #
 
 import sys
-from samson.SamsonClient import SamsonClient
+import samson
+
+if not (webhook_id and commit_sha and message and project_name):
+	sys.exit("Please provide webhook_id, commit_sha, message and project_name")
 
 client = SamsonClient(server, server['webhookToken'])
-client.start_deploy(webhook_id, commit_sha, message, project_name)
+data = client.start_deploy(webhook_id, commit_sha, message)
+
+for deploy_id in data["deploy_ids"]:
+    client.wait_for_deploy(project_name, deploy_id)
