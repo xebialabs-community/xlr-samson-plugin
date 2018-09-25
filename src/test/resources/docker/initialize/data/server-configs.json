@@ -12,7 +12,7 @@
     "id": "Configuration/Custom/Configuration1",
     "type":"samson.Server",
     "title":"samson",
-    "url":"http://samson.zd-mini.com/",
+    "url":"http://samson-stub:5000/",
     "webhookToken":"API-123"
   }
 ]

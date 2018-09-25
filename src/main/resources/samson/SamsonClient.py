@@ -15,57 +15,88 @@ from xlrelease.HttpRequest import HttpRequest
 
 HTTP_SUCCESS = sets.Set([200, 201])
 
+
 class SamsonClient(object):
-    
-    def __init__(self, httpConnection, webhookToken):
+
+    def __init__(self, httpConnection, webhookToken, maxChecksPerDeploymentId=30, timeout=5):
         self.httpConnection = httpConnection
         self.httpRequest = HttpRequest(httpConnection)
         self.webhookToken = webhookToken
         self.headers = self._get_headers()
-        
+        self.maxChecksPerDeploymentId = maxChecksPerDeploymentId
+        self.timeout = timeout
+
     @staticmethod
     def create_client(httpConnection, webhookToken):
         return SamsonClient(httpConnection, webhookToken)
 
     def _get_headers(self):
-        return {"Accept": "application/json", "Content-Type": "application/json", "Authorization": "Bearer %s" % self.webhookToken}
+        return {"Accept": "application/json", "Content-Type": "application/json",
+                "Authorization": "Bearer %s" % self.webhookToken}
 
-    def ping(self):
+    def ping(self, project_name):
         # random valid endpoint that verifies we're logged in / have a valid token
-        url = '/projects'
+        url = '/projects/%s' % project_name
         response = self.httpRequest.get(url, headers=self.headers)
-        if response.getStatus() in HTTP_SUCCESS: 
+        if response.getStatus() in HTTP_SUCCESS:
             data = json.loads(response.getResponse())
             print json.dumps(data)
         else:
             self.throw_error(response)
 
-    def start_deploy(self, webhook_id, commit_sha, message):
+    def start_deploy(self, webhook_id, commit_sha, message, branch="master"):
         url = "/integrations/generic/%s" % webhook_id
         body = {
-            "deploy": { 
-                "branch": "master",
+            "deploy": {
+                "branch": branch,
                 "commit": {
-                    "sha" : commit_sha,
-                    "message" : message
+                    "sha": commit_sha,
+                    "message": message
                 }
             }
         }
 
-        print "body = %s" % body
+        print "body = %s" % json.dumps(body)
 
         # example response: {"deploy_ids":[],"messages":"INFO: Branch master is release branch: true\nINFO: Deploying to 0 stages\n"}
-        # /projects/gcr-watcher/deploys/44
         response = self.httpRequest.post(url, headers=self.headers, body=json.dumps(body))
 
         if response.getStatus() in HTTP_SUCCESS:
             data = json.loads(response.getResponse())
+            print json.dumps(data["deploy_ids"])
             print json.dumps(data["messages"])
             return data
+        else:
+            self.throw_error(response)
 
-        self.throw_error(response)
-       
+    def wait_for_deploy(self, project_name, deploy_id):
+        # /projects/gcr-watcher/deploys/44.json
+        url = "/projects/%s/deploys/%s.json" % (project_name, deploy_id)
+        status = ""
+        number_of_checks = 0
+
+        while status not in ["succeeded", "failed"]:
+            response = self.httpRequest.get(url, headers=self.headers)
+
+            if response.getStatus() in HTTP_SUCCESS:
+                depData = json.loads(response.getResponse())
+                status = depData["status"]
+                depReportUrl = depData["url"]            
+
+                number_of_checks += 1
+                if number_of_checks > self.maxChecksPerDeploymentId:
+                    sys.exit("Fail: project %s deployment %s failed" % (project_name, deploy_id))
+
+                time.sleep(self.timeout)
+            else:
+                self.throw_error(response)
+
+            if status == "failed":
+                sys.exit("Fail: project %s deployment %s failed" % (project_name, deploy_id))
+            else:
+                print "Success: project %s deployment %s succeeded" % (project_name, deploy_id)
+
     def throw_error(self, response):
-        msg = "Error from server, HTTP Return: %s, content %s\n" % (response.getStatus(),  response.getResponse())
+        msg = "Error from server, HTTP Return: %s, content %s\n" % (response.getStatus(), response.getResponse())
         print msg
         sys.exit(msg)
