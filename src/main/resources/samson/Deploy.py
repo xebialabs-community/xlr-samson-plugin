@@ -9,7 +9,7 @@
 #
 
 import sys
-import samson
+from samson.SamsonClient import SamsonClient
 
 if not (webhook_id and commit_sha and message and project_name):
 	sys.exit("Please provide webhook_id, commit_sha, message and project_name")
