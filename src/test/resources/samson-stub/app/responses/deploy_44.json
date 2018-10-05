@@ -1,4 +1,25 @@
 {
-  "status": "succeeded",
-  "url": "http://google.com"
+  "deploy": {
+    "id": 44,
+    "stage_id": 9,
+    "job_id": 357,
+    "reference": "v37",
+    "created_at": "2018-10-04T23:04:28.000Z",
+    "updated_at": "2018-10-04T23:06:39.000Z",
+    "buddy_id": null,
+    "started_at": null,
+    "deleted_at": null,
+    "build_id": null,
+    "release": true,
+    "kubernetes": true,
+    "project_id": 10,
+    "kubernetes_rollback": true,
+    "kubernetes_reuse_build": false,
+    "env_state": "# Staging\nHELLO_PORT=\"80\"\n",
+    "triggering_deploy_id": null,
+    "status": "succeeded",
+    "url": "https://server.com/projects/hello-xlr/deploys/44",
+    "production": false,
+    "summary": "v37 was deployed to POC Staging"
+  }
 }

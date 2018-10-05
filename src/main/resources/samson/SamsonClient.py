@@ -79,7 +79,7 @@ class SamsonClient(object):
             response = self.httpRequest.get(url, headers=self.headers)
 
             if response.getStatus() in HTTP_SUCCESS:
-                depData = json.loads(response.getResponse())
+                depData = json.loads(response.getResponse())["deploy"]
                 status = depData["status"]
                 depReportUrl = depData["url"]            
 
