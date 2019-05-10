@@ -8,6 +8,9 @@ deploy:
   file: build/libs/*.jar
   skip_cleanup: true
   on:
-    all_branches:  true
-    tags:  true
+    all_branches: true
+    tags: true
     repo: xebialabs-community/xlr-samson-plugin
+notifications:
+  slack:
+    secure: sryZzoljGmAF5FlbIVbslmr37yfur8woLyvZKpOHmDN5LWuUW+tX9xR033k99f0MWE4HYPKnRs8Nz7ni+YegBxLf+JKvFfJRLraHuuYEz4TWwBf8fcPa20wwM1K/itghVuwrvHxt2bWQMJbBa59JNhTOCZm7HUDU0pjuXs5bHSwLYF5Z5W8QZJPNuhmYuNjtockFZnSfHIky62uezWn3qMzrSWa84GR660zTQSCYSk+jJgM2LtrFbrXZHa96vI7/bxPoz69yJIWY7yZwePaoA1XCllDoFGVnaXzSHNjI2HdnpiA1wSBRQmcoRC3jhoqP1/YW0zcrD70/FUI6dSizPpvZV9Tub+Q/Xjq+N8nGoecUEvu/MSeot2/JJcBCGrV1Uaui2m8VvCyaoZt1Wp0htkEaydt4EiNpCUr9qJAM/0mewzoJ/uVubC8bjJUYzzIo2y142a1Jc4/OI5ZpF7DpoQl4d5XI83BVHVC1HsGRDcaHiRaEAEK2mxYZbQWlnCQE8ASb+NCa+BmcASst+dmpCVgE4zdyyiOYvVZTpTpCf4q7Pf2GD7VMoadvZKLryZS2hiUz9gZ//4oYq1xnxTu0MOgcTnC7YwyG4/E3RApb3I9c/R57ww+y+s79d7wo+Sgo9wA7vYwMNbHejoZdBbeM/8JGHMp9sH7MGrFMkbY3cS8=
